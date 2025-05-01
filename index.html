@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pengumuman Kelulusan SMA YPK Sentani</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(to bottom, #ffffff, #e0f0ff);
+      font-family: 'Segoe UI', sans-serif;
+      color: #003366;
+    }
+    .logo {
+      max-width: 120px;
+    }
+    #loginSection, #resultSection {
+      display: none;
+    }
+    .card {
+      background-color: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      margin-top: 20px;
+    }
+    .btn-primary, .btn-success {
+      background-color: #005baa;
+      border: none;
+    }
+    .btn-primary:hover, .btn-success:hover {
+      background-color: #004080;
+    }
+    input.form-control {
+      border: 2px solid #005baa;
+    }
+    #hasilNama {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    #hasilStatus {
+      font-size: 1.3rem;
+    }
+  </style>
+</head>
+<body class="text-center p-4">
+  <div class="container">
+    <img src="logo ypk.jpeg" alt="Logo YPK" class="logo mb-3" />
+    <h1 class="mb-3 fw-bold">Pengumuman Kelulusan</h1>
+    <h4 class="mb-4">SMA YPK Sentani - Tahun Pelajaran 2024/2025</h4>
+
+    <div id="welcomeSection" class="card">
+      <p>Salam sejahtera dalam kasih Tuhan Yesus Kristus.</p>
+      <p>Selamat kepada seluruh peserta didik yang telah menyelesaikan pendidikan di SMA YPK Sentani. Tetap semangat dan terus melangkah ke jenjang yang lebih tinggi!</p>
+      <button class="btn btn-primary" onclick="showLogin()">LOGIN</button>
+    </div>
+
+    <div id="loginSection" class="card">
+      <h5>Masukkan Nomor Ujian Anda</h5>
+      <input type="text" id="nomorUjian" class="form-control w-75 mx-auto" placeholder="Contoh: 3-25-25-02-0019-0057-8" />
+      <button class="btn btn-success mt-3" onclick="cekKelulusan()">Cek Kelulusan</button>
+    </div>
+
+    <div id="resultSection" class="card">
+      <h5>Hasil Kelulusan</h5>
+      <p id="hasilNama"></p>
+      <p id="hasilStatus" class="fw-bold"></p>
+      <a href="" onclick="location.reload()">Kembali</a>
+    </div>
+  </div>
+
+  <script>
+    let data = {};
+
+    fetch('kelulusan_siswa_ypk_2025.csv')
+      .then(response => response.text())
+      .then(text => {
+        const lines = text.trim().split('\n').slice(1);
+        lines.forEach(line => {
+          const [no, nama, nisn, nomorUjian, keterangan, kelas] = line.split(',');
+          data[nomorUjian] = { nama, keterangan };
+        });
+      });
+
+    function showLogin() {
+      document.getElementById('welcomeSection').style.display = 'none';
+      document.getElementById('loginSection').style.display = 'block';
+    }
+
+    function cekKelulusan() {
+      const nomor = document.getElementById('nomorUjian').value.trim();
+      const info = data[nomor];
+
+      if (info) {
+        document.getElementById('hasilNama').textContent = `Nama: ${info.nama}`;
+        document.getElementById('hasilStatus').textContent = `Status: ${info.keterangan.toUpperCase()}`;
+      } else {
+        document.getElementById('hasilNama').textContent = `Nomor Ujian tidak ditemukan.`;
+        document.getElementById('hasilStatus').textContent = '';
+      }
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('resultSection').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
